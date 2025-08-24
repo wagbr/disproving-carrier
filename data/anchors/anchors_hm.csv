@@ -1,0 +1,96 @@
+qid,name,class,primary_source,notes
+Q1405,Augustus,H,Res Gestae Divi Augusti (Monumentum Ancyranum; CIL; ILS),Imperador; inscrições e moedas (RIC I).
+Q1407,Tiberius,H,Inscrições e cunhagem imperial (RIC I),Imperador; epigrafia e numismática.
+Q1409,Caligula (Gaius),H,Inscrições e cunhagem imperial (RIC I),Imperador; atestações materiais.
+Q1411,Claudius,H,CIL VI 1256–1258 (Aqua Claudia / Anio Novus); cunhagem (RIC I),Imperador; obras públicas e moedas.
+,Nero,H,Cunhagem imperial; inscrições diversas,Imperador; atestações materiais (preencher QID).
+,Galba,H,Cunhagem imperial; inscrições,Imperador; atestações materiais (preencher QID).
+,Otho,H,Cunhagem imperial; inscrições,Imperador; atestações materiais (preencher QID).
+,Vitellius,H,Cunhagem imperial; inscrições,Imperador; atestações materiais (preencher QID).
+Q1419,Vespasian,H,Cunhagem (RIC II); inscrições de edifícios (Coliseu),Imperador; extensas atestações materiais.
+Q1421,Titus,H,Cunhagem (RIC II); inscrição/arco de Tito,Imperador; atestações materiais.
+Q1423,Domitian,H,Cunhagem (RIC II); inscrições,Imperador; atestações materiais.
+Q1048,Julius Caesar,H,Moedas republicanas (RRC); inscrições,Estadista; numismática/epigrafia.
+,Marcus Antonius (Mark Antony),H,Moedas republicanas (RRC); inscrições,Triúnviro; numismática/epigrafia (preencher QID).
+,Marcus Aemilius Lepidus,H,Moedas/inscrições,Triúnviro; numismática/epigrafia (preencher QID).
+,Marcus Vipsanius Agrippa,H,Inscrições de obras públicas; cunhagem,General/estadista; epigrafia/numismática (preencher QID).
+,Gaius Maecenas,H,Inscrições administrativas/monumentais,Patrono; documentação administrativa (preencher QID).
+Q313398,Publius Sulpicius Quirinius,H,ILS 2683 (Q. Aemilius Secundus); listas consulares,Legado da Síria; epigrafia.
+Q17131,Pontius Pilate,H,"Pedra de Pilatos (AE 1963, 104)",Prefeito da Judeia; inscrição em Cesareia.
+,Coponius,H,Testemunhos administrativos/epigrafia local,Prefeito da Judeia (6–9 d.C.); preencher QID.
+,Marcus Ambivulus,H,Epigrafia administrativa,Prefeito da Judeia (9–12 d.C.); preencher QID.
+,Annius Rufus,H,Epigrafia administrativa,Prefeito da Judeia (12–15 d.C.); preencher QID.
+,Valerius Gratus,H,Epigrafia/numismática regional,Prefeito da Judeia (15–26 d.C.); preencher QID.
+,Marcellus (prefect of Judea),H,Registros administrativos; epigrafia,Prefeito interino (36–37 d.C.); preencher QID.
+,Marullus (prefect of Judea),H,Registros administrativos; epigrafia,Prefeito (37–41 d.C.); preencher QID.
+,Cuspius Fadus,H,Epigrafia/administrativa,Procurador da Judeia (44–46); preencher QID.
+,Tiberius Julius Alexander,H,Epigrafia alexandrina/romana,Prefeito do Egito e oficial; preencher QID.
+,Ventidius Cumanus,H,Epigrafia/administrativa,Procurador da Judeia (48–52); preencher QID.
+,Antonius Felix,H,Epigrafia/administrativa,Procurador da Judeia (52–59); preencher QID.
+,Porcius Festus,H,Epigrafia/administrativa,Procurador da Judeia (59–62); preencher QID.
+,Gessius Florus,H,Epigrafia/administrativa,Procurador da Judeia (64–66); preencher QID.
+Q51672,Herod the Great,H,Moedas herodianas; inscrições monumentais,Rei cliente; vasta numismática/epigrafia.
+Q244345,Herod Archelaus,H,Moedas provinciais; inscrições,Etnarca; atestações materiais.
+Q192950,Herod Antipas,H,Moedas tetrárquicas (ΗΡΩΔΟΥ ΤΕΤΡΑΡΧΟΥ),Tetrarca; numismática.
+,Philip the Tetrarch (Herod Philip II),H,Moedas regionais; inscrições,Tetrarca; numismática/epigrafia (preencher QID).
+Q298636,Herod Agrippa I,H,Moedas com 'AGRIPA'; inscrições regionais,Rei herodiano; numismática/epigrafia.
+,Herod Agrippa II,H,Moedas/inscrições,Rei cliente; numismática/epigrafia (preencher QID).
+Q211246,Caiaphas (Joseph bar Qayafa),H,Ossuário inscrito (IAA 91-468),Sumo sacerdote; evidência material.
+,Annas (Ananus ben Seth),H,Ossuários e epitáfios (debate); registros,Sumo sacerdote; preencher QID.
+,Jonathan ben Ananus,H,Epigrafia/ossuários (quando aplicável),Sumo sacerdote; preencher QID.
+,Ananias ben Nedebeus,H,Registros administrativos/epigrafia,Sumo sacerdote; preencher QID.
+,Lucius Vitellius (governor of Syria),H,Inscrições administrativas,Governador da Síria; preencher QID.
+,Aulus Plautius,H,Triunfo/inscrições; diplomas militares,General/governador; preencher QID.
+,Gnaeus Domitius Corbulo,H,Inscrições militares; diplomas,General; preencher QID.
+,Publius Petronius (governor of Syria),H,Inscrições administrativas,Governador da Síria; preencher QID.
+,Sextus Julius Severus,H,Inscrições/diplomas militares,General; preencher QID.
+,Pliny the Younger,H,Inscrições municipais; cargos (CIL),Administrador romano; preencher QID.
+,Pliny the Elder,H,Inscrições/cargos oficiais (CIL),Oficial romano/erudito; preencher QID.
+,Publius Cornelius Tacitus,H,Inscrições/cargos (prosopografias),Senador/historiador; preencher QID.
+,Gaius Suetonius Tranquillus,H,Inscrições/cargos administrativos,Administrador; preencher QID.
+,Cassius Dio,H,Inscrições/cargos (prosopografias),Senador; preencher QID.
+Q34201,Zeus,M,"Hesíodo, Teogonia; Homero, Ilíada",Deus olímpico; figura mítica.
+Q38012,Hera,M,"Hesíodo, Teogonia; Homero, Ilíada",Deusa olímpica; figura mítica.
+Q37122,Athena,M,"Homero, Ilíada e Odisseia",Deusa da sabedoria/guerra.
+Q37340,Apollo,M,"Hinos Homéricos; Homero, Ilíada",Deus da profecia/música.
+Q39503,Artemis,M,"Hinos Homéricos; Hesíodo, Teogonia",Deusa da caça.
+Q41484,Hermes,M,"Hino Homérico a Hermes; Homero, Ilíada",Mensageiro dos deuses.
+Q41680,Dionysus,M,"Hinos Homéricos; Eurípides, Bacantes",Deus do vinho/êxtase.
+Q41127,Poseidon,M,"Homero, Ilíada e Odisseia; Hesíodo, Teogonia",Deus do mar.
+,Demeter,M,"Hesíodo, Teogonia; Hino Homérico a Deméter",Deusa da agricultura (preencher QID).
+,Hestia,M,"Hesíodo, Teogonia",Deusa do fogo doméstico (preencher QID).
+,Ares,M,"Homero, Ilíada",Deus da guerra (preencher QID).
+,Hephaestus,M,"Homero, Ilíada; Hesíodo, Teogonia",Deus ferreiro (preencher QID).
+,Aphrodite,M,"Hesíodo, Teogonia; Hinos Homéricos",Deusa do amor (preencher QID).
+,Hades,M,"Hesíodo, Teogonia; Hinos Homéricos",Deus do submundo (preencher QID).
+,Persephone,M,Hino Homérico a Deméter,Rainha do submundo (preencher QID).
+Q12280,Heracles,M,"Hesíodo; Pseudo-Apolodoro, Biblioteca",Herói mítico grego.
+,Perseus,M,Pseudo-Apolodoro; Píndaro,Herói mítico (preencher QID).
+,Theseus,M,"Plutarco, Vida de Teseu; Pseudo-Apolodoro",Herói mítico (preencher QID).
+,Bellerophon,M,Pseudo-Apolodoro; Homero,Herói mítico (preencher QID).
+,Atalanta,M,Pseudo-Apolodoro; Calímaco,Heroína mítica (preencher QID).
+,Orpheus,M,Píndaro; Ovídio; tradição órfica,Herói/cantor mítico (preencher QID).
+,Cadmus,M,Pseudo-Apolodoro; Eurípides,Fundador mítico de Tebas (preencher QID).
+,Europa (mito),M,Hesíodo; Mosco,Figura mítica fenícia (preencher QID).
+,Minos,M,Homero; Plutarco,Rei mítico de Creta (preencher QID).
+,Pasiphae,M,Apolodoro; Ovídio,Figura mítica (preencher QID).
+,Ariadne,M,Catulo; Ovídio; Plutarco,Figura mítica (preencher QID).
+,Daedalus,M,"Ovídio, Metamorfoses; Diodoro",Artífice mítico (preencher QID).
+,Icarus,M,"Ovídio, Metamorfoses",Figura mítica (preencher QID).
+Q34644,Jason,M,"Apolônio de Rodes, Argonáuticas",Líder dos Argonautas.
+,Medea,M,"Eurípides, Medeia; Apolônio",Feiticeira mítica (preencher QID).
+,Oedipus,M,"Sófocles, Édipo Rei",Herói trágico mítico (preencher QID).
+,Antigone,M,"Sófocles, Antígona",Heroína trágica mítica (preencher QID).
+,Niobe,M,Ovídio; autores trágicos,Figura mítica (preencher QID).
+,Leda,M,Pausânias; Ovídio,Figura mítica (preencher QID).
+,Ganymede (mythology),M,Homero; Ovídio,Figura mítica (preencher QID).
+,Asclepius,M,Homero; Píndaro; Pausânias,Herói/deus da medicina (preencher QID).
+,Eros,M,"Hesíodo, Teogonia; Hinos",Deus do amor (preencher QID).
+,Helios,M,Homero; Hino a Hélio,Deus solar (preencher QID).
+,Selene,M,Hino a Selene; Hesíodo,Deusa lunar (preencher QID).
+,Cronus,M,"Hesíodo, Teogonia",Titã; figura mítica (preencher QID).
+,Rhea,M,"Hesíodo, Teogonia",Titã; figura mítica (preencher QID).
+,Uranus,M,"Hesíodo, Teogonia",Deus primordial; figura mítica (preencher QID).
+,Gaia,M,"Hesíodo, Teogonia",Deusa primordial; figura mítica (preencher QID).
+,Nyx,M,"Hesíodo, Teogonia",Deusa primordial; figura mítica (preencher QID).
+,Eos,M,Hesíodo; Homero,Deusa aurora (preencher QID).

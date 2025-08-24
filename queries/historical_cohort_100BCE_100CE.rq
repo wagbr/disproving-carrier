@@ -1,0 +1,27 @@
+# Historical cohort (humans) — 100 BCE to 100 CE by birth (P569) or death (P570)
+# RATIONALE: Align Jesus with contemporaneous figures so the documentary opportunity set is comparable.
+# NOTE: P569/P570 are used ONLY for sampling; they are excluded from predictive features downstream.
+
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX wd:  <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?human WHERE {
+  {
+    SELECT DISTINCT ?human WHERE {
+      {
+        ?human wdt:P569 ?birth .
+        FILTER (?birth >= "-0100-01-01T00:00:00Z"^^xsd:dateTime &&
+                ?birth <=  "0100-12-31T00:00:00Z"^^xsd:dateTime)
+      }
+      UNION
+      {
+        ?human wdt:P570 ?death .
+        FILTER (?death >= "-0100-01-01T00:00:00Z"^^xsd:dateTime &&
+                ?death <=  "0100-12-31T00:00:00Z"^^xsd:dateTime)
+      }
+      ?human wdt:P31 wd:Q5 .   # instance of: human
+    }
+    LIMIT {limit} OFFSET {offset}
+  }
+}

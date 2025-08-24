@@ -1,0 +1,397 @@
+# analyze_wikidata_logistic.R
+# ───────────────────────────────────────────────────────────────────────
+
+setwd("C:/Users/wagbr/OneDrive/Documentos/Artigos/Probabilidade de Jesus ter existido")
+suppressPackageStartupMessages({
+  req <- c("readr","dplyr","tidyr","stringr","purrr","tibble",
+           "Matrix","glmnet","rsample","yardstick","openxlsx")
+  inst <- rownames(installed.packages())
+  miss <- setdiff(req, inst)
+  if (length(miss)) install.packages(miss, repos = "https://cloud.r-project.org")
+  lapply(req, library, character.only = TRUE)
+})
+
+set.seed(123)
+
+long_path <- "data/processed/all_properties_long.csv"
+out_dir   <- "out"
+
+v_folds <- 5
+repeats <- 10 
+
+global_exclude <- c("P569","P570")
+bio_basic_extra <- c("P19","P20","P27","P106","P1412")
+
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+dat <- readr::read_delim(long_path, show_col_types = FALSE, guess_max = 100000)
+needed <- c("qid","property","value_raw","snaktype")
+stopifnot(all(needed %in% names(dat)))
+
+dat <- dat %>% dplyr::filter(.data$snaktype == "value") %>%
+  dplyr::select(qid, property, value_raw)
+
+hist_lab <- dat %>%
+  dplyr::filter(property == "P31") %>%
+  dplyr::group_by(qid) %>%
+  dplyr::summarise(y = ifelse(any(value_raw == "Q5"), 1L, 0L), .groups="drop")
+
+dat <- dat %>% dplyr::semi_join(hist_lab, by="qid")
+
+properties <- openxlsx::read.xlsx("data/misc/list_of_properties.xlsx")
+
+pres <- dat %>%
+  dplyr::select(qid, property) %>%
+  dplyr::distinct() %>%
+  dplyr::filter(property != "P31") %>%
+  dplyr::inner_join(hist_lab, by="qid") %>%
+  dplyr::inner_join(properties, by = dplyr::join_by(property == ID)) %>%
+  dplyr::filter(!`Data.type[1]` %in% c("EI"))
+
+pres <- pres %>% dplyr::filter(!(property %in% global_exclude))
+
+min_qids_per_pid <- 10
+pid_freq <- pres %>% dplyr::count(property, name="n_qids")
+keep_pids <- pid_freq %>% dplyr::filter(n_qids >= min_qids_per_pid) %>% dplyr::pull(property)
+pres <- pres %>% dplyr::filter(property %in% keep_pids)
+
+by_class <- pres %>% dplyr::distinct(property, y) %>%
+  tidyr::pivot_wider(names_from = y, values_from = y, values_fill = 0,
+                     names_prefix = "class_",
+                     values_fn = length)
+
+# class_0 > 0 e class_1 > 0
+common_props <- by_class %>%
+  dplyr::mutate(has_0 = class_0 > 0, has_1 = class_1 > 0) %>%
+  dplyr::filter(has_0 & has_1) %>%
+  dplyr::pull(property)
+
+pres <- pres %>% dplyr::filter(property %in% common_props)
+
+# ── Summaries ──────────────────────────────────────────────────────────
+n_props_total <- pres %>% dplyr::distinct(property) %>% nrow()
+n_qids_total  <- pres %>% dplyr::distinct(qid) %>% nrow()
+n_hist        <- pres %>% dplyr::distinct(qid, y) %>% dplyr::count(y) %>% 
+  dplyr::filter(y==1L) %>% dplyr::pull(n)
+n_myth        <- pres %>% dplyr::distinct(qid, y) %>% dplyr::count(y) %>% 
+  dplyr::filter(y==0L) %>% dplyr::pull(n)
+
+feature_space_summary <- tibble::tibble(
+  total_qids = n_qids_total,
+  total_hist = ifelse(length(n_hist), n_hist, 0L),
+  total_myth = ifelse(length(n_myth), n_myth, 0L),
+  total_properties_after_filters = n_props_total,
+  min_qids_per_property = min_qids_per_pid,
+  globally_excluded = paste(global_exclude, collapse = ", "),
+  common_props_constraint = TRUE
+)
+readr::write_csv(feature_space_summary, file.path(out_dir, "feature_space_summary.csv"))
+
+# ---------- AUX FUNCTIONS -----------------------------------------
+
+make_sparse_matrix <- function(df) {
+  qids <- df %>% dplyr::distinct(qid) %>% dplyr::arrange(qid) %>% dplyr::pull(qid)
+  props<- df %>% dplyr::distinct(property) %>% dplyr::arrange(property) %>% dplyr::pull(property)
+  qi <- match(df$qid, qids)
+  pj <- match(df$property, props)
+  X  <- Matrix::sparseMatrix(i = qi, j = pj, x = 1L, dims = c(length(qids), length(props)),
+                             dimnames = list(qids, props))
+  ydf <- df %>% dplyr::distinct(qid, y) %>% dplyr::arrange(qid)
+  stopifnot(all(qids == ydf$qid))
+  y <- ydf$y
+  list(X = X, y = y, qids = qids, props = props)
+}
+
+apply_ablation <- function(X, props, drop_props) {
+  todrop <- intersect(props, drop_props)
+  if (!length(todrop)) return(list(X=X, props=props, dropped=character(0)))
+  keep_idx <- which(!(props %in% todrop))
+  list(X = X[, keep_idx, drop=FALSE], props = props[keep_idx], dropped = todrop)
+}
+
+youden_threshold <- function(prob, y) {
+  df <- tibble::tibble(y = factor(ifelse(y==1,"H","M"), levels=c("M","H")), p = prob)
+  cand <- sort(unique(prob))
+  if (length(cand) > 200) cand <- cand[seq(1, length(cand), length.out=200)]
+  best <- 0.5; bestJ <- -Inf
+  for (t in cand) {
+    pred <- factor(ifelse(prob >= t, "H","M"), levels=c("M","H"))
+    sens <- yardstick::sens_vec(df$y, pred, estimator="binary")
+    spec <- yardstick::spec_vec(df$y, pred, estimator="binary")
+    J <- sens + spec - 1
+    if (!is.na(J) && J > bestJ) { bestJ <- J; best <- t }
+  }
+  best
+}
+
+compute_metrics <- function(prob, y, thr) {
+  pred <- ifelse(prob >= thr, 1L, 0L)
+  tp <- sum(pred==1 & y==1); tn <- sum(pred==0 & y==0)
+  fp <- sum(pred==1 & y==0); fn <- sum(pred==0 & y==1)
+  acc <- mean(pred==y)
+  prec<- ifelse(tp+fp==0, NA_real_, tp/(tp+fp))
+  rec <- ifelse(tp+fn==0, NA_real_, tp/(tp+fn))
+  spec<- ifelse(tn+fp==0, NA_real_, tn/(tn+fp))
+  ba  <- mean(c(rec, spec), na.rm=TRUE)
+  auc <- tryCatch(yardstick::roc_auc_vec(
+    factor(ifelse(y==1,"H","M"), levels=c("M","H")), prob,
+    estimator="binary", event_level = "second"),
+    error=function(e) NA_real_
+  )
+  f1  <- ifelse(is.na(prec) || is.na(rec) || (prec+rec)==0, NA_real_, 2*prec*rec/(prec+rec))
+  tibble::tibble(accuracy=acc, precision=prec, recall=rec, specificity=spec, bal_accuracy=ba, auc=as.numeric(auc), f1=f1)
+}
+
+eval_glmnet_cv <- function(X, y, qids, scenario="all") {
+  fold_base <- tibble::tibble(qid = qids, y = y)
+  folds <- rsample::vfold_cv(fold_base, v = v_folds, repeats = repeats, strata = y)
+  
+  fold_metrics <- purrr::map_dfr(seq_along(folds$splits), function(i) {
+    s <- folds$splits[[i]]
+    tr <- rsample::analysis(s); te <- rsample::assessment(s)
+    idx_tr <- match(tr$qid, qids); idx_te <- match(te$qid, qids)
+    Xtr <- X[idx_tr, , drop=FALSE]; ytr <- y[idx_tr]
+    Xte <- X[idx_te, , drop=FALSE]; yte <- y[idx_te]
+    
+    cvfit <- glmnet::cv.glmnet(Xtr, ytr, family="binomial", alpha=0, nfolds=5, type.measure="deviance")
+    lam <- cvfit$lambda.1se
+    prob_tr <- as.numeric(predict(cvfit, newx=Xtr, s=lam, type="response"))
+    thr <- youden_threshold(prob_tr, ytr)
+    prob_te <- as.numeric(predict(cvfit, newx=Xte, s=lam, type="response"))
+    m <- compute_metrics(prob_te, yte, thr)
+    m$fold_id <- i; m$scenario <- scenario; m$lambda <- lam; m$threshold <- thr
+    m
+  })
+  final_cv <- glmnet::cv.glmnet(X, y, family="binomial", alpha=0, nfolds=5, type.measure="deviance")
+  list(fold_metrics = fold_metrics, final_model = final_cv)
+}
+
+score_jesus <- function(cvfit, X, y, qids, jesus_qid = "Q302", B = 200, seed = 123) {
+  out <- list(prob_final = NA_real_, prob_med = NA_real_, ci_lwr = NA_real_, ci_upr = NA_real_, n_boot = 0L)
+  if (!(jesus_qid %in% qids)) return(out)
+  row_j <- which(qids == jesus_qid)
+  out$prob_final <- as.numeric(predict(cvfit, newx = X[row_j, , drop = FALSE], s = cvfit$lambda.1se, type = "response"))
+  if (B <= 0) return(out)
+  set.seed(seed)
+  idx0 <- which(y == 0L); idx1 <- which(y == 1L)
+  probs <- numeric(B)
+  for (b in seq_len(B)) {
+    i0 <- sample(idx0, length(idx0), replace = TRUE)
+    i1 <- sample(idx1, length(idx1), replace = TRUE)
+    ib <- c(i0, i1)
+    Xb <- X[ib, , drop = FALSE]; yb <- y[ib]
+    cvb <- try(glmnet::cv.glmnet(Xb, yb, family = "binomial", alpha = 0, nfolds = 5, type.measure = "deviance"), silent = TRUE)
+    if (inherits(cvb, "try-error")) { probs[b] <- NA_real_; next }
+    probs[b] <- as.numeric(predict(cvb, newx = X[row_j, , drop = FALSE], s = cvb$lambda.1se, type = "response"))
+  }
+  probs <- probs[is.finite(probs)]
+  if (length(probs) >= 10) {
+    qs <- stats::quantile(probs, c(0.025, 0.5, 0.975), na.rm = TRUE)
+    out$ci_lwr <- unname(qs[1]); out$prob_med <- unname(qs[2]); out$ci_upr <- unname(qs[3]); out$n_boot <- length(probs)
+  }
+  out
+}
+
+# ---------- MAIN SCENARIOS -----------------------------------------
+
+run_scenario <- function(pres_df, scenario, drop_props = character(0),
+                         jesus_qid = "Q302", top_k = 30, jesus_boot = 200) {
+  base <- make_sparse_matrix(pres_df)
+  ab <- apply_ablation(base$X, base$props, drop_props)
+  X <- ab$X; props <- ab$props; y <- base$y; qids <- base$qids
+  if (ncol(X) == 0) stop("Sem colunas de preditores após ablação: ", scenario)
+  res <- eval_glmnet_cv(X, y, qids, scenario = scenario)
+  final_cv <- res$final_model
+  
+  co <- as.matrix(glmnet::coef.glmnet(final_cv$glmnet.fit, s = final_cv$lambda.1se))
+  top_tab <- tibble::tibble(property = rownames(co), coef = as.numeric(co[, 1])) %>%
+    dplyr::filter(.data$property != "(Intercept)") %>%
+    dplyr::mutate(abs_coef = abs(.data$coef)) %>%
+    dplyr::arrange(dplyr::desc(.data$abs_coef)) %>%
+    dplyr::slice_head(n = min(top_k, nrow(.)))
+  
+  ytab <- pres_df %>% dplyr::distinct(qid, y)
+  N1 <- sum(ytab$y == 1L); N0 <- sum(ytab$y == 0L)
+  
+  uni <- pres_df %>%
+    dplyr::count(property, y, name = "n") %>%
+    tidyr::pivot_wider(names_from = y, values_from = n, values_fill = 0, names_prefix = "n_") %>%
+    dplyr::mutate(
+      a = n_1 + 0.5, b = (N1 - n_1) + 0.5,
+      c = n_0 + 0.5, d = (N0 - n_0) + 0.5,
+      logOR = log((a * d) / (b * c)),
+      se    = sqrt(1 / a + 1 / b + 1 / c + 1 / d),
+      lwr   = logOR - 1.96 * se,
+      upr   = logOR + 1.96 * se,
+      prev_H = n_1 / N1, prev_M = n_0 / N0
+    ) %>%
+    dplyr::select(property, dplyr::everything())
+  
+  top_vars <- top_tab %>% dplyr::left_join(uni, by = "property") %>% dplyr::mutate(scenario = scenario, .before = 1)
+  jes <- score_jesus(final_cv, X, y, qids, jesus_qid = jesus_qid, B = jesus_boot)
+  
+  list(
+    fold_metrics = res$fold_metrics,
+    jesus = tibble::tibble(
+      scenario = scenario,
+      jesus_qid = jesus_qid,
+      jesus_prob_final = jes$prob_final,
+      jesus_prob_median = jes$prob_med,
+      jesus_ci_lwr = jes$ci_lwr,
+      jesus_ci_upr = jes$ci_upr,
+      jesus_n_boot = jes$n_boot,
+      jesus_class_final = ifelse(jes$prob_final >= 0.5, "H", "M"),
+      jesus_class_median = ifelse(is.na(jes$prob_med), NA_character_,
+                                  ifelse(jes$prob_med >= 0.5, "H", "M"))
+    ),
+    top_vars = top_vars
+  )
+}
+
+
+scenarios <- list(
+  all_no_dates = list(drop = character(0)),
+  minus_bio_basic = list(drop = bio_basic_extra)
+)
+
+all_folds <- list(); jesus_out <- list(); top_all <- list()
+for (sc in names(scenarios)) {
+  message("Running scenario: ", sc)
+  out <- run_scenario(
+    pres, scenario = sc,
+    drop_props = scenarios[[sc]]$drop,
+    jesus_qid = "Q302",
+    top_k = 30,
+    jesus_boot = 200
+  )
+  all_folds[[sc]] <- out$fold_metrics
+  jesus_out[[sc]] <- out$jesus
+  top_all[[sc]]   <- out$top_vars
+}
+
+fold_metrics <- dplyr::bind_rows(all_folds)
+readr::write_csv(fold_metrics, file.path(out_dir, "rl_fold_metrics.csv"))
+
+metricas <- c("accuracy","precision","recall","specificity","bal_accuracy","auc","f1")
+summary_ci <- fold_metrics %>%
+  tidyr::pivot_longer(all_of(metricas), names_to = ".metric", values_to = ".val") %>%
+  dplyr::group_by(scenario, .metric) %>%
+  dplyr::summarise(
+    mean = mean(.val, na.rm = TRUE),
+    sd   = sd(.val, na.rm = TRUE),
+    lwr  = stats::quantile(.val, 0.025, na.rm = TRUE),
+    upr  = stats::quantile(.val, 0.975, na.rm = TRUE),
+    n    = dplyr::n(),
+    .groups = "drop"
+  ) %>%
+  tidyr::pivot_wider(names_from = .metric, values_from = c(mean, sd, lwr, upr)) %>%
+  dplyr::arrange(scenario)
+readr::write_csv(summary_ci, file.path(out_dir, "rl_summary.csv"))
+
+jesus_tbl <- dplyr::bind_rows(jesus_out)
+readr::write_csv(jesus_tbl, file.path(out_dir, "jesus_predictions.csv"))
+
+top_vars_all <- dplyr::bind_rows(top_all) %>%
+  dplyr::arrange(scenario, dplyr::desc(abs_coef)) %>%
+  dplyr::left_join(properties, by = c("property" = "ID")) %>%
+  dplyr::select(scenario, property, label, dplyr::everything())
+readr::write_csv(top_vars_all, file.path(out_dir, "top_variables.csv"))
+
+message("Done. Files recorded in: ", out_dir)
+
+# ───────────────── RANDOM SCENARIOS (k=5,10,20,30) ───────────────────
+
+random_sizes  <- c(5, 10, 20, 30)
+random_reps   <- 1000
+nfolds_glmnet <- 5
+set.seed(123)
+
+run_random_subset_jesus <- function(pres_df, sizes = c(5,10,20,30), reps = 1000,
+                                    jesus_qid = "Q302", nfolds_glmnet = 5, seed = 123) {
+  set.seed(seed)
+  base <- make_sparse_matrix(pres_df)
+  X_all <- base$X; y <- base$y; qids <- base$qids; props_all <- base$props
+  total_props <- length(props_all)
+  
+  if (!(jesus_qid %in% qids)) {
+    warning("QID of Jesus (", jesus_qid, ") not present in group.")
+    return(list(per_rep = tibble::tibble(), summary = tibble::tibble()))
+  }
+  row_j <- which(qids == jesus_qid)
+  
+  per_rep_rows <- list()
+  for (k in sizes) {
+    K <- min(k, total_props)
+    message(sprintf("Random scenario: k = %d (%.2f%% de %d props) | %d repetitions",
+                    K, 100*K/total_props, total_props, reps))
+    probs <- numeric(reps)
+    nz_j  <- integer(reps)
+    
+    for (r in seq_len(reps)) {
+      cols_idx <- sample.int(ncol(X_all), size = K, replace = FALSE)
+      Xk <- X_all[, cols_idx, drop = FALSE]
+      nz_j[r] <- sum(Xk[row_j, ] != 0)
+      cvfit <- try(glmnet::cv.glmnet(Xk, y, family = "binomial",
+                                     alpha = 0, nfolds = nfolds_glmnet,
+                                     type.measure = "deviance"),
+                   silent = TRUE)
+      if (inherits(cvfit, "try-error")) {
+        probs[r] <- NA_real_
+      } else {
+        probs[r] <- as.numeric(predict(cvfit, newx = Xk[row_j, , drop = FALSE],
+                                       s = cvfit$lambda.1se, type = "response"))
+      }
+      if (r %% 50L == 0L) cat(sprintf("  k=%d (%.2f%%), rep=%d/%d, prob=%.4f, nz_j=%d\n",
+                                      K, 100*K/total_props, r, reps,
+                                      ifelse(is.na(probs[r]), NaN, probs[r]), nz_j[r]))
+    }
+    
+    per_rep_rows[[as.character(k)]] <- tibble::tibble(
+      scenario = paste0("rnd_", K),
+      size = K,
+      pct_of_total = 100*K/total_props,
+      repetition = seq_len(reps),
+      jesus_prob = probs,
+      jesus_nonzero_props = nz_j,
+      total_props_available = total_props
+    )
+  }
+  
+  per_rep <- dplyr::bind_rows(per_rep_rows)
+  
+  summary <- per_rep %>%
+    dplyr::group_by(scenario, size, total_props_available) %>%
+    dplyr::summarise(
+      pct_of_total = unique(round(pct_of_total, 2)),
+      n_reps = dplyr::n(),
+      mean   = mean(jesus_prob, na.rm = TRUE),
+      median = stats::median(jesus_prob, na.rm = TRUE),
+      sd     = stats::sd(jesus_prob, na.rm = TRUE),
+      lwr    = stats::quantile(jesus_prob, 0.025, na.rm = TRUE),
+      upr    = stats::quantile(jesus_prob, 0.975, na.rm = TRUE),
+      min    = min(jesus_prob, na.rm = TRUE),
+      max    = max(jesus_prob, na.rm = TRUE),
+      frac_ge_0_5 = mean(jesus_prob >= 0.5, na.rm = TRUE),
+      jesus_nonzero_props_mean   = mean(jesus_nonzero_props, na.rm = TRUE),
+      jesus_nonzero_props_median = stats::median(jesus_nonzero_props, na.rm = TRUE),
+      .groups = "drop"
+    )
+  
+  list(per_rep = per_rep, summary = summary)
+}
+
+rnd <- run_random_subset_jesus(
+  pres_df = pres,
+  sizes = random_sizes,
+  reps = random_reps,
+  jesus_qid = "Q302",
+  nfolds_glmnet = nfolds_glmnet,
+  seed = 123
+)
+
+readr::write_csv(rnd$per_rep,  file.path(out_dir, "jesus_random_probs.csv"))
+readr::write_csv(rnd$summary,  file.path(out_dir, "jesus_random_summary.csv"))
+
+message("Random scenarios finalized. Wrote: ",
+        file.path(out_dir, "jesus_random_probs.csv"), " e ",
+        file.path(out_dir, "jesus_random_summary.csv"))

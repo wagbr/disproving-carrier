@@ -1,0 +1,20 @@
+# Mythic/legendary cohort — controlled instance classes
+# Edit the VALUES list if you wish to broaden/narrow the mythic taxonomy.
+
+PREFIX wd:  <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?item WHERE {
+  {
+    SELECT DISTINCT ?item WHERE {
+      VALUES ?instance {
+        wd:Q22988604   # mythological Greek character
+        wd:Q4271324    # mythical character
+        wd:Q178885     # deity
+        wd:Q23015925   # demigod of Greek mythology
+      }
+      ?item wdt:P31 ?instance .
+    }
+    LIMIT {limit} OFFSET {offset}
+  }
+}

@@ -1,0 +1,96 @@
+qid;name;class;primary_source;notes
+Q1405;Augustus;H;Res Gestae Divi Augusti (Monumentum Ancyranum;
+Q1407;Tiberius;H;Inscrições e cunhagem imperial (RIC I);Imperador
+Q1409;Caligula (Gaius);H;Inscrições e cunhagem imperial (RIC I);Imperador
+Q1411;Claudius;H;CIL VI 1256–1258 (Aqua Claudia / Anio Novus);
+Q1413;Nero;H;Cunhagem imperial;
+Q1414;Galba;H;Cunhagem imperial;
+Q1416;Otho;H;Cunhagem imperial;
+Q1417;Vitellius;H;Cunhagem imperial;
+Q1419;Vespasian;H;Cunhagem (RIC II);
+Q1421;Titus;H;Cunhagem (RIC II);
+Q1423;Domitian;H;Cunhagem (RIC II);
+Q1048;Julius Caesar;H;Moedas republicanas (RRC);
+Q51673;Marcus Antonius (Mark Antony);H;Moedas republicanas (RRC);
+Q435329;Marcus Aemilius Lepidus;H;Moedas/inscrições;Triúnviro
+Q48174;Marcus Vipsanius Agrippa;H;Inscrições de obras públicas;
+Q8833;Gaius Maecenas;H;Inscrições administrativas/monumentais;Patrono
+Q313398;Publius Sulpicius Quirinius;H;ILS 2683 (Q. Aemilius Secundus);
+Q17131;Pontius Pilate;H;Pedra de Pilatos (AE 1963, 104);Prefeito da Judeia
+Q153037;Coponius;H;Testemunhos administrativos/epigrafia local;Prefeito da Judeia (6–9 d.C.)
+Q153035;Marcus Ambivulus;H;Epigrafia administrativa;Prefeito da Judeia (9–12 d.C.)
+Q153055;Annius Rufus;H;Epigrafia administrativa;Prefeito da Judeia (12–15 d.C.)
+Q153063;Valerius Gratus;H;Epigrafia/numismática regional;Prefeito da Judeia (15–26 d.C.)
+Q601385;Marcellus (prefect of Judea);H;Registros administrativos;
+Q939720;Marullus (prefect of Judea);H;Registros administrativos;
+Q459841;Cuspius Fadus;H;Epigrafia/administrativa;Procurador da Judeia (44–46)
+Q361357;Tiberius Julius Alexander;H;Epigrafia alexandrina/romana;Prefeito do Egito e oficial
+Q705429;Ventidius Cumanus;H;Epigrafia/administrativa;Procurador da Judeia (48–52)
+Q316915;Antonius Felix;H;Epigrafia/administrativa;Procurador da Judeia (52–59)
+Q464307;Porcius Festus;H;Epigrafia/administrativa;Procurador da Judeia (59–62)
+Q1376454;Gessius Florus;H;Epigrafia/administrativa;Procurador da Judeia (64–66)
+Q51672;Herod the Great;H;Moedas herodianas;
+Q244345;Herod Archelaus;H;Moedas provinciais;
+Q192950;Herod Antipas;H;Moedas tetrárquicas (ΗΡΩΔΟΥ ΤΕΤΡΑΡΧΟΥ);Tetrarca
+Q345647;Philip the Tetrarch (Herod Philip II);H;Moedas regionais;
+Q298636;Herod Agrippa I;H;Moedas com 'AGRIPA';
+Q313419;Herod Agrippa II;H;Moedas/inscrições;Rei cliente
+Q211246;Caiaphas (Joseph bar Qayafa);H;Ossuário inscrito (IAA 91-468);Sumo sacerdote
+Q51680;Annas (Ananus ben Seth);H;Ossuários e epitáfios (debate);
+Q11728180;Jonathan ben Ananus;H;Epigrafia/ossuários (quando aplicável);Sumo sacerdote
+Q485854;Ananias ben Nedebeus;H;Registros administrativos/epigrafia;Sumo sacerdote
+Q1235522;Lucius Vitellius (governor of Syria);H;Inscrições administrativas;Governador da Síria
+Q352489;Aulus Plautius;H;Triunfo/inscrições;
+Q313066;Gnaeus Domitius Corbulo;H;Inscrições militares;
+Q715494;Publius Petronius (governor of Syria);H;Inscrições administrativas;Governador da Síria
+Q666507;Sextus Julius Severus;H;Inscrições/diplomas militares;General
+Q168707;Pliny the Younger;H;Inscrições municipais;
+Q82778;Pliny the Elder;H;Inscrições/cargos oficiais (CIL);Oficial romano/erudito
+Q2161;Publius Cornelius Tacitus;H;Inscrições/cargos (prosopografias);Senador/historiador
+Q10133;Gaius Suetonius Tranquillus;H;Inscrições/cargos administrativos;Administrador
+Q185223;Cassius Dio;H;Inscrições/cargos (prosopografias);Senador
+Q34201;Zeus;M;Hesíodo, Teogonia;
+Q38012;Hera;M;Hesíodo, Teogonia;
+Q37122;Athena;M;Homero, Ilíada e Odisseia;Deusa da sabedoria/guerra.
+Q37340;Apollo;M;Hinos Homéricos;
+Q39503;Artemis;M;Hinos Homéricos;
+Q41484;Hermes;M;Hino Homérico a Hermes;
+Q41680;Dionysus;M;Hinos Homéricos;
+Q41127;Poseidon;M;Homero, Ilíada e Odisseia;
+Q40730;Demeter;M;Hesíodo, Teogonia;
+Q41419;Hestia;M;Hesíodo, Teogonia;Deusa do fogo doméstico (preencher QID).
+Q40901;Ares;M;Homero, Ilíada;Deus da guerra (preencher QID).
+Q44384;Hephaestus;M;Homero, Ilíada;
+Q35500;Aphrodite;M;Hesíodo, Teogonia;
+Q41410;Hades;M;Hesíodo, Teogonia;
+Q45967;Persephone;M;Hino Homérico a Deméter;Rainha do submundo (preencher QID).
+Q12280;Heracles;M;Hesíodo;
+Q1760397;Perseus;M;Pseudo-Apolodoro;
+Q1320718;Theseus;M;Plutarco, Vida de Teseu;
+Q189872;Bellerophon;M;Pseudo-Apolodoro;
+Q190323;Atalanta;M;Pseudo-Apolodoro;
+Q174353;Orpheus;M;Píndaro;
+Q27613;Cadmus;M;Pseudo-Apolodoro;
+Q165170;Europa (mito);M;Hesíodo;
+Q23168;Minos;M;Homero;
+Q203236;Pasiphae;M;Apolodoro;
+Q184874;Ariadne;M;Catulo;
+Q134756;Daedalus;M;Ovídio, Metamorfoses;
+Q34041;Icarus;M;Ovídio, Metamorfoses;Figura mítica (preencher QID).
+Q34644;Jason;M;Apolônio de Rodes, Argonáuticas;Líder dos Argonautas.
+Q174278;Medea;M;Eurípides, Medeia;
+Q130890;Oedipus;M;Sófocles, Édipo Rei;Herói trágico mítico (preencher QID).
+Q131351;Antigone;M;Sófocles, Antígona;Heroína trágica mítica (preencher QID).
+Q213621;Niobe;M;Ovídio;
+Q182019;Leda;M;Pausânias;
+Q131588;Ganymede (mythology);M;Homero;
+Q83223;Asclepius;M;Homero;
+Q121973;Eros;M;Hesíodo, Teogonia;
+Q134270;Helios;M;Homero;
+Q131585;Selene;M;Hino a Selene;
+Q44204;Cronus;M;Hesíodo, Teogonia;Titã
+Q108419;Rhea;M;Hesíodo, Teogonia;Titã
+Q79999;Uranus;M;Hesíodo, Teogonia;Deus primordial
+Q93172;Gaia;M;Hesíodo, Teogonia;Deusa primordial
+Q131203;Nyx;M;Hesíodo, Teogonia;Deusa primordial
+Q178417;Eos;M;Hesíodo;

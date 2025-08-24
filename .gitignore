@@ -1,0 +1,18 @@
+# R
+.Rhistory
+.Rproj.user/
+.RData
+renv/staging/
+# Python
+.venv/
+__pycache__/
+# Outputs & caches
+out/**
+!out/.gitkeep
+data/cache/**
+data/processed/**
+# OS
+.DS_Store
+Thumbs.db
+# PDF and manuscripts
+.pdf
