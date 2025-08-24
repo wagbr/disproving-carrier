@@ -15,4 +15,4 @@ data/processed/**
 .DS_Store
 Thumbs.db
 # PDF and manuscripts
-.pdf
+*.pdf
