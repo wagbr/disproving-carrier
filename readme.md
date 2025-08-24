@@ -1,6 +1,4 @@
-Here’s a complete, evaluator-oriented **README.md** you can drop in the repo.
-
----
+This is the repository for my recent submitted manuscript.
 
 # Disproving Carrier: *Proving History the Way Historians Do, but With Data*
 
@@ -212,45 +210,6 @@ Prereqs: R (≥ 4.2), Python (≥ 3.9).
 * Convergence across **multiple** independent probes (ablations, anchors, random subsets) matters more than any single number.
 * While imperfect, Wikidata is currently the most practical **open, versioned, multilingual, typed** platform to support **auditable** historical comparison at scale.
 * The same design applies to **events** as well as persons (encode their documentary properties: sources, participants, location, datings, institutional context).
-
----
-
-## How to cite
-
-If you use this code or results, please cite:
-
-```
-W. A. G. et al. (2025). Disproving Carrier: Proving History the Way Historians Do, but With Data.
-GitHub repository: https://github.com/wagbr/disproving-carrier
-```
-
-A machine-readable **CITATION.cff** is included. If a Zenodo DOI is minted for releases, add it here.
-
----
-
-## Licenses
-
-* **Code:** MIT (see `LICENSE`).
-* **Manuscript text, figures, derived tables:** CC BY 4.0 (see `LICENSE-DATA`).
-* **Data provenance:** derived from Wikidata; respect their CC0/CC BY policies as applicable and credit Wikidata contributors.
-
----
-
-## Contact / replication
-
-We ship **exact queries, scripts, and pinned environments** to enable third parties to reproduce the corpus, features, and estimates end-to-end. Issues and replication reports are welcome via the repository’s **Issues** tab.
-
----
-
-## Reproducibility checklist (for evaluators)
-
-* [ ] `queries/` present with SPARQL and README
-* [ ] `src/R/analyze_wikidata_logistic.R` runs end-to-end on your machine
-* [ ] `out/metrics/rl_summary.csv` produced with two scenarios: `all_no_dates`, `minus_bio_basic`
-* [ ] `out/predictions/jesus_predictions.csv` includes final and CI estimates for Q302
-* [ ] `out/predictions/jesus_random_summary.csv` shows *k* = 5/10/20/30 with % ≥ 0.5
-* [ ] `out/attribution/top_variables.csv` lists top positive/negative properties with prevalences
-* [ ] README + LICENSE + CITATION present; snapshot date documented in `data/raw/`
 
 ---
 
